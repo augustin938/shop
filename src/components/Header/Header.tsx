@@ -1,35 +1,37 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/Button';
-import { SearchBar } from '../SearchBar'; // Создадим позже
+import { SearchBar } from '../SearchBar';
+import { useAuthStore } from '../../store/authStore';
 
 import './Header.css';
 
 export const Header = () => {
+  const { isAuthenticated, logout } = useAuthStore();
+
   return (
     <header className="header">
       <div className="header__top">
         <Link to="/" className="logo">
-          <h1>ShopName</h1>
+          <h1>FashionShop</h1>
         </Link>
         
-        <SearchBar /> Поле поиска
+        <SearchBar />
         
         <nav>
-          <Link to="/auth">Войти</Link>
+          {isAuthenticated ? (
+            <Button onClick={logout}>Выйти</Button>
+          ) : (
+            <Link to="/auth">Войти</Link>
+          )}
           <Link to="/cart">Корзина (0)</Link>
         </nav>
       </div>
       
-      {/* Горизонтальное меню категорий */}
       <div className="categories">
-        <Link to="/catalog/electronics">Электроника</Link>
-        <Link to="/catalog/clothes">Одежда</Link>
-        <Link to="/catalog/books">Книги</Link>
+        <Link to="/catalog/men">Мужская одежда</Link>
+        <Link to="/catalog/women">Женская одежда</Link>
+        <Link to="/catalog/kids">Детская одежда</Link>
       </div>
     </header>
   );
 };
-
-function useAuthStore(): { user: any; isAuthenticated: any; logout: any; } {
-  throw new Error('Function not implemented.');
-}

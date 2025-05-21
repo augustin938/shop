@@ -8,7 +8,7 @@ export const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, register, isAuthenticated} = useAuthStore();
+  const {login, register, isAuthenticated, logout} = useAuthStore();
   
   
   const navigate = useNavigate();

@@ -70,15 +70,21 @@ export const useAuthStore = create<AuthState>()(
       },
       
       logout: () => {
-        set({ 
+       set({
           userId: null,
           email: null,
-          isAuthenticated: false 
+          isAuthenticated: false,
+          error: null
         });
       }
     }),
     {
-      name: 'auth-storage',
+        name: 'auth-storage',
+        partialize: (state) => ({
+        userId: state.userId,
+        email: state.email,
+        isAuthenticated: state.isAuthenticated
+      })
     }
   )
 );

@@ -2,12 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const User = require('./models/User');
-
+const productRoutes = require('./routes/products.routes');
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.json());
+app.use('/api/products', productRoutes);
 
 // Подключение MongoDB
 mongoose.connect('mongodb://localhost:27017/shop')
