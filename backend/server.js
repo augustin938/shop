@@ -6,32 +6,26 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' })); // For Vite
 app.use(express.json());
 
-// Подключение к MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI)
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB Atlas'))
   .catch(err => console.error('Connection error:', err));
 
-// Роуты
+// Routes
 app.use('/api/auth', require('./routes/auth.routes'));
-const productRoutes = require('./routes/product.routes');
-app.use('/api/products', productRoutes);
+app.use('/api/products', require('./routes/products.routes')); // Убедитесь, что путь и имя файла совпадают
 
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// Добавить в server.js
-const cors = require('cors');
-app.use(cors({ origin: 'http://localhost:5173' })); // Для Vite
-
-// Подключить .env
-require('dotenv').config();
-const jwtSecret = process.env.JWT_SECRET || 'secret-fallback';
-
-// Обработка ошибок MongoDB
+// Error handling for MongoDB
 mongoose.connection.on('error', err => {
   console.error('MongoDB error:', err);
 });
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Load JWT secret
+// const jwtSecret = process.env.JWT_SECRET || 'secret-fallback';

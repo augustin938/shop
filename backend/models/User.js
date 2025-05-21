@@ -1,21 +1,19 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
   email: { 
     type: String, 
-    required: true, 
+    required: [true, 'Email обязателен'], 
     unique: true,
-    match: /^\S+@\S+\.\S+$/ // Простая валидация email
+    match: [/^\S+@\S+\.\S+$/, 'Некорректный формат email'] // Улучшенная валидация email
   },
-  password: { type: String, required: true }
+  password: { 
+    type: String, 
+    required: [true, 'Пароль обязателен'],
+    minlength: [6, 'Пароль должен содержать минимум 6 символов'] // Минимальная длина пароля
+  }
 });
 
-// Хеширование пароля
-UserSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// Удаляем хеширование пароля
 
 module.exports = mongoose.model('User', UserSchema);
