@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
         
         try {
           // Реальный запрос к API
-          const response = await axios.post('https://api.your-backend.com/auth/login', {
+          const response = await axios.post('http://localhost:5000/api/auth/login', {
             email,
             password
           }, {

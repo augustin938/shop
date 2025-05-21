@@ -16,7 +16,22 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Роуты
 app.use('/api/auth', require('./routes/auth.routes'));
-// app.use('/api/products', require('./routes/products.routes'));
+const productRoutes = require('./routes/product.routes');
+app.use('/api/products', productRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Добавить в server.js
+const cors = require('cors');
+app.use(cors({ origin: 'http://localhost:5173' })); // Для Vite
+
+// Подключить .env
+require('dotenv').config();
+const jwtSecret = process.env.JWT_SECRET || 'secret-fallback';
+
+// Обработка ошибок MongoDB
+mongoose.connection.on('error', err => {
+  console.error('MongoDB error:', err);
+});

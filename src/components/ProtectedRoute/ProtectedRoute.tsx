@@ -4,10 +4,5 @@ import { JSX } from 'react';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuthStore();
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
-  
-  return children;
+  return isAuthenticated ? children : <Navigate to="/auth" />;
 };
