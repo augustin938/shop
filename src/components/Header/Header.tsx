@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { SearchBar } from '../SearchBar'; // Создадим позже
+import { useAuthStore } from '../../store/authStore';
 import './Header.css';
 
 export const Header = () => {
+  const { user, isAuthenticated, logout } = useAuthStore();
   return (
     <header className="header">
       <div className="header__top">

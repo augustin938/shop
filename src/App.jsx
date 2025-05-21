@@ -15,6 +15,11 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/auth" element={<Auth/>}/>
+        {/* <Route path="/profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      } /> */}
     </Routes>
   );
 }
