@@ -8,21 +8,31 @@ export const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, isAuthenticated, isLoading} = useAuthStore();
+  const { login, register, isAuthenticated} = useAuthStore();
+  
   
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    try {
-        await login(email, password);
-        navigate('/');
-    } catch (err) {
-        // Ошибка уже обработана в хранилище
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  // Проверка заполненности полей
+  if (!email.trim() || !password.trim()) {
+    setError('Заполните все поля');
+    return;
+  }
+
+  try {
+    if (isLogin) {
+      await login(email, password);
+    } else {
+      await register(email, password);
     }
-  };
+    navigate('/');
+  } catch (err) {
+    console.error('Ошибка формы:', err);
+  }
+};
 
   if (isAuthenticated) {
     return (
@@ -56,8 +66,8 @@ export const Auth = () => {
           minLength={6}
         />
         
-        <button type="submit" disabled={isLoading}>
-        {isLoading ? 'Загрузка...' : isLogin ? 'Войти' : 'Зарегистрироваться'}
+        <button type="submit">
+        {isLogin ? "Войти" : "Зарегатся"}
         </button>
       </form>
 

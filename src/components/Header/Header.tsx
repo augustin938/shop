@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { SearchBar } from '../SearchBar'; // Создадим позже
-import { useAuthStore } from '../../store/authStore';
+
 import './Header.css';
 
 export const Header = () => {
-  const { user, isAuthenticated, logout } = useAuthStore();
   return (
     <header className="header">
       <div className="header__top">
@@ -30,3 +29,7 @@ export const Header = () => {
     </header>
   );
 };
+
+function useAuthStore(): { user: any; isAuthenticated: any; logout: any; } {
+  throw new Error('Function not implemented.');
+}

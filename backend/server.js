@@ -1,31 +1,71 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const User = require('./models/User');
 
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:5173' })); // For Vite
+app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch(err => console.error('Connection error:', err));
+// Подключение MongoDB
+mongoose.connect('mongodb://localhost:27017/shop')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB error:', err));
 
-// Routes
-app.use('/api/auth', require('./routes/auth.routes'));
-app.use('/api/products', require('./routes/products.routes')); // Убедитесь, что путь и имя файла совпадают
+  
+// Упрощённая регистрация (без хеширования)
+app.post('/api/register', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log('Регистрация:', { email, password }); // Логируем данные
 
-// Error handling for MongoDB
-mongoose.connection.on('error', err => {
-  console.error('MongoDB error:', err);
+    // Проверка существования пользователя
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Пользователь уже существует' });
+    }
+
+    // Сохраняем пароль в открытом виде (ВРЕМЕННО!)
+    const user = new User({ email, password });
+    await user.save();
+    console.log('Пользователь сохранён:', user);
+
+    res.status(201).json({ 
+      userId: user._id,
+      email: user.email,
+      message: 'Регистрация успешна' 
+    });
+  } catch (err) {
+    console.error('Ошибка регистрации:', err);
+    res.status(500).json({ message: 'Ошибка регистрации' });
+  }
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Упрощённый вход (без bcrypt)
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log('Вход:', { email, password }); // Логируем данные
 
-// Load JWT secret
-// const jwtSecret = process.env.JWT_SECRET || 'secret-fallback';
+    const user = await User.findOne({ email });
+    console.log('Найден пользователь:', user);
+
+    if (!user || user.password !== password) {
+      console.log('Неверные данные');
+      return res.status(401).json({ message: 'Неверный email или пароль' });
+    }
+
+    res.json({ 
+      userId: user._id,
+      email: user.email,
+      message: 'Вход выполнен' 
+    });
+  } catch (err) {
+    console.error('Ошибка входа:', err);
+    res.status(500).json({ message: 'Ошибка входа' });
+  }
+});
+
+app.listen(5000, () => console.log('Сервер запущен на порту 5000'));
